@@ -64,12 +64,16 @@ class Webpacker::Compiler
       compilation_digest_path.write(watched_files_digest)
     end
 
+    def run_cmd
+      RbConfig.ruby
+    end
+
     def run_webpack
       logger.info "Compiling..."
 
       stdout, stderr, status = Open3.capture3(
         webpack_env,
-        "#{RbConfig.ruby} ./bin/webpack",
+        "#{run_cmd} ./bin/webpack",
         chdir: File.expand_path(config.root_path)
       )
 

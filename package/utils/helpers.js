@@ -41,6 +41,8 @@ const resetEnv = () => {
 
 const ensureTrailingSlash = (path) => (path.endsWith('/') ? path : `${path}/`)
 
+const replacePlaceholders = (str, placeholders) => str.replace(/\$\{([^}]+)\}/g, (_, match) => placeholders[match])
+
 module.exports = {
   chdirTestApp,
   chdirCwd,
@@ -54,5 +56,6 @@ module.exports = {
   isStrPath,
   canMerge,
   prettyPrint,
-  resetEnv
+  resetEnv,
+  replacePlaceholders
 }
