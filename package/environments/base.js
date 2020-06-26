@@ -59,7 +59,7 @@ const getExtensionsGlob = () => {
 const getEntryObject = () => {
   const result = new ConfigObject()
   const glob = getExtensionsGlob()
-  const rootPath = replacePlaceholders(join(config.source_path, config.source_entry_path));
+  const rootPath = replacePlaceholders(join(config.source_path, config.source_entry_path), process.env)
   const paths = sync(join(rootPath, glob))
   paths.forEach((path) => {
     const namespace = relative(join(rootPath), dirname(path));
