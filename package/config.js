@@ -23,12 +23,10 @@ if (isArray(app.static_assets_extensions) && app.static_assets_extensions.length
 
 const config = deepMerge(defaults, app)
 
-config.outputPath = resolve(
-  replacePlaceholders(join(config.public_root_path, config.public_output_path), process.env)
-)
+config.outputPath = resolve(replacePlaceholders(join(config.public_root_path, config.public_output_path), process.env));
 
 // Merge resolved_paths into additional_paths for backwards-compat
-config.additional_paths = config.additional_paths.concat(config.resolved_paths || [])
+config.additional_paths = config.additional_paths.concat(config.resolved_paths || []);
 
 // Ensure that the publicPath includes our asset host so dynamic imports
 // (code-splitting chunks and static assets) load from the CDN instead of a relative path.
@@ -39,5 +37,19 @@ const getPublicPath = () => {
 
 config.publicPath = getPublicPath()
 config.publicPathWithoutCDN = `/${config.public_output_path}/`
+
+const deepReplacePlaceholders = (config) => {
+  Object.keys(config).forEach((key) => {
+    if (typeof config[key] === 'string') {
+      config[key] = replacePlaceholders(config[key], process.env);
+    } else if (typeof config[key] === 'object') {
+      config[key] = deepReplacePlaceholders(config[key]);
+    }
+  });
+
+  return config;
+};
+
+deepReplacePlaceholders(config);
 
 module.exports = config

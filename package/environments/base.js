@@ -13,7 +13,7 @@ const WebpackAssetsManifest = require('webpack-assets-manifest')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const PnpWebpackPlugin = require('pnp-webpack-plugin')
 
-const { isNotObject, prettyPrint, replacePlaceholders } = require('../utils/helpers')
+const { isNotObject, prettyPrint } = require('../utils/helpers')
 const deepMerge = require('../utils/deep_merge')
 
 const { ConfigList, ConfigObject } = require('../config_types')
@@ -59,7 +59,7 @@ const getExtensionsGlob = () => {
 const getEntryObject = () => {
   const result = new ConfigObject()
   const glob = getExtensionsGlob()
-  const rootPath = replacePlaceholders(join(config.source_path, config.source_entry_path), process.env)
+  const rootPath = join(config.source_path, config.source_entry_path);
   const paths = sync(join(rootPath, glob))
   paths.forEach((path) => {
     const namespace = relative(join(rootPath), dirname(path));
@@ -84,7 +84,9 @@ const getModulePaths = () => {
   const result = new ConfigList()
   result.append('source', resolve(config.source_path))
   if (config.additional_paths) {
-    config.additional_paths.forEach((path) => result.append(path, resolve(path)))
+    config.additional_paths.forEach((path) => {
+      result.append(path, resolve(path))
+    });
   }
   result.append('node_modules', 'node_modules')
   return result
