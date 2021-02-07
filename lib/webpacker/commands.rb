@@ -23,7 +23,7 @@ class Webpacker::Commands
         .each_with_index
         .drop_while do |(mtime, _), index|
           max_age = [0, Time.now - Time.at(mtime)].max
-          max_age < age && index < count
+          max_age < age || index < count
         end
         .each do |(_, files), index|
           files.each do |file|
@@ -64,7 +64,8 @@ class Webpacker::Commands
 
     def current_version
       packs = manifest.refresh.values.map do |value|
-        next if value.is_a?(Hash)
+        value = value["src"] if value.is_a?(Hash)
+        next unless value.is_a?(String)
 
         File.join(config.root_path, "public", "#{value}*")
       end.compact

@@ -3,6 +3,8 @@ const { safeLoad } = require('js-yaml')
 const { readFileSync } = require('fs')
 const deepMerge = require('./utils/deep_merge')
 const { isArray, ensureTrailingSlash, replacePlaceholders } = require('./utils/helpers')
+const { merge } = require('webpack-merge')
+const { ensureTrailingSlash } = require('./utils/helpers')
 const { railsEnv } = require('./env')
 const configPath = require('./configPath')
 
@@ -27,6 +29,9 @@ config.outputPath = resolve(replacePlaceholders(join(config.public_root_path, co
 
 // Merge resolved_paths into additional_paths for backwards-compat
 config.additional_paths = config.additional_paths.concat(config.resolved_paths || []);
+
+const config = merge(defaults, app)
+config.outputPath = resolve(config.public_root_path, config.public_output_path)
 
 // Ensure that the publicPath includes our asset host so dynamic imports
 // (code-splitting chunks and static assets) load from the CDN instead of a relative path.

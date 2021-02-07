@@ -1,30 +1,5 @@
-const { stringify } = require('flatted')
-
-const isObject = (value) => typeof value === 'object'
-  && value !== null
-  && (value.length === undefined || value.length === null)
-
-const isNotObject = (value) => !isObject(value)
-
-const isBoolean = (str) => /^true/.test(str) || /^false/.test(str)
-
-const isEmpty = (value) => value === null || value === undefined
-
-const isString = (key) => key && typeof key === 'string'
-
-const isStrPath = (key) => {
-  if (!isString(key)) throw new Error(`Key ${key} should be string`)
-  return isString(key) && key.includes('.')
-}
-
 const isArray = (value) => Array.isArray(value)
-
-const isEqual = (target, source) => stringify(target) === stringify(source)
-
-const canMerge = (value) => isObject(value) || isArray(value)
-
-const prettyPrint = (obj) => JSON.stringify(obj, null, 2)
-
+const isBoolean = (str) => /^true/.test(str) || /^false/.test(str)
 const chdirTestApp = () => {
   try {
     return process.chdir('test/test_app')
@@ -43,13 +18,32 @@ const ensureTrailingSlash = (path) => (path.endsWith('/') ? path : `${path}/`)
 
 const replacePlaceholders = (str, placeholders) => str.replace(/\$\{([^}]+)\}/g, (_, match) => placeholders[match])
 
+const resolvedPath = (packageName) => {
+  try {
+    return require.resolve(packageName)
+  } catch (e) {
+    if (e.code !== 'MODULE_NOT_FOUND') {
+      throw e
+    }
+    return null
+  }
+}
+
+const moduleExists = (packageName) => (!!resolvedPath(packageName))
+
+const canProcess = (rule, fn) => {
+  const modulePath = resolvedPath(rule)
+
+  if (modulePath) {
+    return fn(modulePath)
+  }
+
+  return null
+}
+
 module.exports = {
   chdirTestApp,
   chdirCwd,
-  ensureTrailingSlash,
-  isObject,
-  isNotObject,
-  isBoolean,
   isArray,
   isEqual,
   isEmpty,
@@ -57,5 +51,10 @@ module.exports = {
   canMerge,
   prettyPrint,
   resetEnv,
-  replacePlaceholders
+  replacePlaceholders,
+  isBoolean,
+  ensureTrailingSlash,
+  canProcess,
+  moduleExists,
+  resetEnv
 }

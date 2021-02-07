@@ -8,22 +8,22 @@ chdirTestApp()
 describe('Development environment', () => {
   afterAll(chdirCwd)
 
-  describe('toWebpackConfig', () => {
+  describe('webpackConfig', () => {
     beforeEach(() => jest.resetModules())
 
     test('should use development config and environment including devServer if WEBPACK_DEV_SERVER', () => {
       process.env.RAILS_ENV = 'development'
       process.env.NODE_ENV = 'development'
       process.env.WEBPACK_DEV_SERVER = 'YES'
-      const { environment } = require('../index')
+      const { webpackConfig } = require('../index')
 
-      const config = environment.toWebpackConfig()
-      expect(config.output.path).toEqual(resolve('public', 'packs'))
-      expect(config.output.publicPath).toEqual('/packs/')
-      expect(config).toMatchObject({
+      expect(webpackConfig.output.path).toEqual(resolve('public', 'packs'))
+      expect(webpackConfig.output.publicPath).toEqual('/packs/')
+      expect(webpackConfig).toMatchObject({
         devServer: {
           host: 'localhost',
-          port: 3035
+          port: 3035,
+          injectClient: true
         }
       })
     })
@@ -32,12 +32,11 @@ describe('Development environment', () => {
       process.env.RAILS_ENV = 'development'
       process.env.NODE_ENV = 'development'
       process.env.WEBPACK_DEV_SERVER = undefined
-      const { environment } = require('../index')
+      const { webpackConfig } = require('../index')
 
-      const config = environment.toWebpackConfig()
-      expect(config.output.path).toEqual(resolve('public', 'packs'))
-      expect(config.output.publicPath).toEqual('/packs/')
-      expect(config.devServer).toEqual(undefined)
+      expect(webpackConfig.output.path).toEqual(resolve('public', 'packs'))
+      expect(webpackConfig.output.publicPath).toEqual('/packs/')
+      expect(webpackConfig.devServer).toEqual(undefined)
     })
   })
 })
