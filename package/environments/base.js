@@ -44,7 +44,7 @@ const getModulePaths = () => {
 
   if (config.additional_paths) {
     config.additional_paths.forEach((path) => {
-      result.append(path, resolve(path))
+      result.push(path, resolve(path))
     });
   }
   result.push('node_modules')

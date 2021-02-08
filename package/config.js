@@ -1,10 +1,8 @@
 const { resolve, join } = require('path')
 const { safeLoad } = require('js-yaml')
 const { readFileSync } = require('fs')
-const deepMerge = require('./utils/deep_merge')
 const { isArray, ensureTrailingSlash, replacePlaceholders } = require('./utils/helpers')
 const { merge } = require('webpack-merge')
-const { ensureTrailingSlash } = require('./utils/helpers')
 const { railsEnv } = require('./env')
 const configPath = require('./configPath')
 
@@ -23,14 +21,14 @@ if (isArray(app.static_assets_extensions) && app.static_assets_extensions.length
   delete defaults.static_assets_extensions
 }
 
-const config = deepMerge(defaults, app)
+const config = merge(defaults, app)
 
 config.outputPath = resolve(replacePlaceholders(join(config.public_root_path, config.public_output_path), process.env));
 
 // Merge resolved_paths into additional_paths for backwards-compat
 config.additional_paths = config.additional_paths.concat(config.resolved_paths || []);
 
-const config = merge(defaults, app)
+
 config.outputPath = resolve(config.public_root_path, config.public_output_path)
 
 // Ensure that the publicPath includes our asset host so dynamic imports
